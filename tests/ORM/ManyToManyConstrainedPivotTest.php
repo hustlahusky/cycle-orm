@@ -325,7 +325,9 @@ abstract class ManyToManyConstrainedPivotTest extends BaseTest
 
         $selector = new Select($this->orm, User::class);
         $selector
-            ->with('tags')
+            ->with('tags', [
+                'method' => Select\AbstractLoader::JOIN,
+            ])
             ->load('tags')
             ->orderBy('id');
 

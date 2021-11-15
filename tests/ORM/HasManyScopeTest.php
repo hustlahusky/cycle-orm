@@ -385,7 +385,9 @@ abstract class HasManyScopeTest extends BaseTest
         ]);
 
         // second user has been filtered out
-        $res = (new Select($this->orm, User::class))->with('comments')->fetchAll();
+        $res = (new Select($this->orm, User::class))->with('comments', [
+            'method' => Select\AbstractLoader::JOIN,
+        ])->fetchAll();
 
         $this->assertCount(1, $res);
         $this->assertSame('hello@world.com', $res[0]->email);

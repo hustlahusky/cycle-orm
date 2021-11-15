@@ -671,7 +671,9 @@ abstract class ManyToManyConstrainTest extends BaseTest
 
         $selector = new Select($this->orm, User::class);
 
-        $res = $selector->with('tags')->orderBy('user.id')->fetchAll();
+        $res = $selector->with('tags', [
+            'method' => Select\AbstractLoader::JOIN,
+        ])->orderBy('user.id')->fetchAll();
 
         $this->assertCount(1, $res);
         $this->assertSame('another@world.com', $res[0]->email);
