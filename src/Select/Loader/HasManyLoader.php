@@ -107,6 +107,11 @@ class HasManyLoader extends JoinableLoader
         return true;
     }
 
+    public function getDefaultJoinMethod(): int
+    {
+        return self::LEFT_JOIN;
+    }
+
     /**
      * {@inheritdoc}
      */

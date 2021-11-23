@@ -67,9 +67,9 @@ abstract class JoinableLoader extends AbstractLoader implements JoinableInterfac
 
     /**
      * @param ORMInterface $orm
-     * @param string       $name
-     * @param string       $target
-     * @param array        $schema
+     * @param string $name
+     * @param string $target
+     * @param array $schema
      */
     public function __construct(ORMInterface $orm, string $name, string $target, array $schema)
     {
@@ -107,7 +107,7 @@ abstract class JoinableLoader extends AbstractLoader implements JoinableInterfac
 
         /**
          * @var AbstractLoader $parent
-         * @var self           $loader
+         * @var self $loader
          */
         $loader = parent::withContext($parent, $options);
 
@@ -207,7 +207,7 @@ abstract class JoinableLoader extends AbstractLoader implements JoinableInterfac
      * Configure query with conditions, joins and columns.
      *
      * @param SelectQuery $query
-     * @param array       $outerKeys Set of OUTER_KEY values collected by parent loader.
+     * @param array $outerKeys Set of OUTER_KEY values collected by parent loader.
      *
      * @return SelectQuery
      */
@@ -361,6 +361,11 @@ abstract class JoinableLoader extends AbstractLoader implements JoinableInterfac
     protected function getColumns(): array
     {
         return $this->define(Schema::COLUMNS);
+    }
+
+    public function getDefaultJoinMethod(): int
+    {
+        return $this->schema[Relation::NULLABLE] ?? false ? self::LEFT_JOIN : self::JOIN;
     }
 
     /**

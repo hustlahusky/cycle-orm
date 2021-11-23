@@ -202,6 +202,11 @@ class ManyToManyLoader extends JoinableLoader
         return true;
     }
 
+    public function getDefaultJoinMethod(): int
+    {
+        return self::LEFT_JOIN;
+    }
+
     /**
      * @param AbstractNode $node
      */

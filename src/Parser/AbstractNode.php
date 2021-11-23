@@ -141,10 +141,22 @@ abstract class AbstractNode
     {
         $data = $this->fetchData($offset, $row);
 
+        // skip empty rows from left join
+        if (null !== $this->duplicateCriteria && !isset($data[$this->duplicateCriteria])) {
+            return \array_reduce(
+                $this->nodes,
+                static function (int $carry, self $node) {
+                    return $carry + ($node->joined ? \count($node->columns) : 0);
+                },
+                \count($this->columns)
+            );
+        }
+
         if ($this->deduplicate($data)) {
             foreach ($this->trackReferences as $key) {
-                if (!empty($data[$key])) {
-                    $this->references[$key][(string)$data[$key]][] = &$data;
+                $ref = (string)$data[$key];
+                if ($ref !== '') {
+                    $this->references[$key][$ref][] = &$data;
                 }
             }
 
@@ -298,13 +310,15 @@ abstract class AbstractNode
                 return;
             }
 
-            end($this->references[$key]);
-            $criteria = key($this->references[$key]);
+            // TODO: php7.3
+            $criteria = \array_key_last($this->references[$key]);
+//            end($this->references[$key]);
+//            $criteria = key($this->references[$key]);
         }
 
         $criteria = (string)$criteria;
 
-        if (!array_key_exists($criteria, $this->references[$key])) {
+        if (!isset($this->references[$key][$criteria])) {
             throw new ParserException("Undefined reference `{$key}`.`{$criteria}`");
         }
 
@@ -315,9 +329,8 @@ abstract class AbstractNode
             } else {
                 $subset[$container] = &$data;
             }
-
-            unset($subset);
         }
+        unset($subset);
     }
 
     /**
@@ -347,18 +360,17 @@ abstract class AbstractNode
     {
         $criteria = (string) $criteria;
 
-        if (!array_key_exists($criteria, $this->references[$key])) {
+        if (!isset($this->references[$key][$criteria])) {
             throw new ParserException("Undefined reference `{$key}`.`{$criteria}`");
         }
 
         foreach ($this->references[$key][$criteria] as &$subset) {
+            // TODO: improve check
             if (!in_array($data, $subset[$container], true)) {
                 $subset[$container][] = &$data;
             }
-
-            unset($subset);
-            continue;
         }
+        unset($subset);
     }
 
     /**

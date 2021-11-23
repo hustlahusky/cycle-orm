@@ -459,6 +459,7 @@ abstract class QueryBuilderTest extends BaseTest
     {
         $select = new Select($this->orm, User::class);
         [$a] = $select->with('comments', [
+            'method' => Select\AbstractLoader::JOIN,
             'where' => function (Select\QueryBuilder $q): void {
                 $q->where('message', 'msg 3');
             },
