@@ -202,6 +202,11 @@ class ManyToManyLoader extends JoinableLoader
         return self::LEFT_JOIN;
     }
 
+    public function isDataDuplicationPossible(): bool
+    {
+        return true;
+    }
+
     /**
      * @param AbstractNode $node
      */

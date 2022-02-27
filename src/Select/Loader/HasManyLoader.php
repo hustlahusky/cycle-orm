@@ -107,6 +107,11 @@ class HasManyLoader extends JoinableLoader
         return self::LEFT_JOIN;
     }
 
+    public function isDataDuplicationPossible(): bool
+    {
+        return true;
+    }
+
     /**
      * {@inheritdoc}
      */

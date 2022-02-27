@@ -234,6 +234,18 @@ abstract class JoinableLoader extends AbstractLoader implements JoinableInterfac
         return parent::configureQuery($query);
     }
 
+    public function isDataDuplicationPossible(): bool
+    {
+        $outerKey = $this->schema[Relation::OUTER_KEY];
+        $indexes = $this->orm->getIndexes($this->target);
+
+        if (!\in_array($outerKey, $indexes, true)) {
+            return true;
+        }
+
+        return parent::isDataDuplicationPossible();
+    }
+
     /**
      * @param SelectQuery $query
      *
