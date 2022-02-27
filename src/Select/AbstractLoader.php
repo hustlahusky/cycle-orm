@@ -199,13 +199,6 @@ abstract class AbstractLoader implements LoaderInterface
             return $loaders[$relation] = $loaders[$relation]->withContext($this, $options);
         }
 
-        if ($join) {
-            if (empty($options['method']) || !in_array($options['method'], [self::JOIN, self::LEFT_JOIN], true)) {
-                // let's tell our loaded that it's method is JOIN (forced)
-                $options['method'] = self::JOIN;
-            }
-        }
-
         try {
             //Creating new loader.
             $loader = $this->orm->getFactory()->loader(
@@ -220,6 +213,11 @@ abstract class AbstractLoader implements LoaderInterface
                 $e->getCode(),
                 $e
             );
+        }
+
+        if ($join && !in_array($options['method'] ?? null, [self::JOIN, self::LEFT_JOIN], true)) {
+            // let's tell our loaded that it's method is JOIN (forced)
+            $options['method'] = $loader instanceof  JoinableLoader ? $loader->getDefaultJoinMethod() : self::JOIN;
         }
 
         return $loaders[$relation] = $loader->withContext($this, $options);

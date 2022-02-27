@@ -102,6 +102,11 @@ class HasManyLoader extends JoinableLoader
         return parent::configureQuery($query);
     }
 
+    public function getDefaultJoinMethod(): int
+    {
+        return self::LEFT_JOIN;
+    }
+
     /**
      * {@inheritdoc}
      */
